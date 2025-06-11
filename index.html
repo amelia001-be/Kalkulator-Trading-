@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kalkulator Trading</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+      background: #f8f9fa;
+    }
+    h2 {
+      color: #333;
+    }
+    input {
+      margin: 5px;
+      padding: 5px;
+      width: 120px;
+    }
+    button {
+      padding: 5px 10px;
+      margin: 10px 0;
+    }
+    .box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .result {
+      margin-top: 10px;
+      color: green;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h2>Kalkulator Pivot Point (Classic)</h2>
+    <label>High: <input type="number" id="high" step="any"></label><br>
+    <label>Low: <input type="number" id="low" step="any"></label><br>
+    <label>Close: <input type="number" id="close" step="any"></label><br>
+    <button onclick="hitungPivot()">Hitung</button>
+    <div class="result" id="pivotResult"></div>
+    <div class="error" id="pivotError"></div>
+  </div>
+
+  <div class="box">
+    <h2>Kalkulator Fibonacci Retracement</h2>
+    <label>High: <input type="number" id="fibHigh" step="any"></label><br>
+    <label>Low: <input type="number" id="fibLow" step="any"></label><br>
+    <button onclick="hitungFibonacci()">Hitung</button>
+    <div class="result" id="fibResult"></div>
+    <div class="error" id="fibError"></div>
+  </div>
+
+  <script>
+    function hitungPivot() {
+      const high = parseFloat(document.getElementById("high").value);
+      const low = parseFloat(document.getElementById("low").value);
+      const close = parseFloat(document.getElementById("close").value);
+      const errorDiv = document.getElementById("pivotError");
+      const resultDiv = document.getElementById("pivotResult");
+
+      errorDiv.innerHTML = "";
+      resultDiv.innerHTML = "";
+
+      if (isNaN(high) || isNaN(low) || isNaN(close)) {
+        errorDiv.innerHTML = "⚠️ Harap isi semua kolom dengan angka yang valid.";
+        return;
+      }
+
+      if (high < low) {
+        errorDiv.innerHTML = "⚠️ Nilai High tidak boleh lebih kecil dari Low.";
+        return;
+      }
+
+      const pp = (high + low + close) / 3;
+      const r1 = 2 * pp - low;
+      const s1 = 2 * pp - high;
+      const r2 = pp + (high - low);
+      const s2 = pp - (high - low);
+
+      resultDiv.innerHTML = `
+        Pivot Point: ${pp.toFixed(2)}<br>
+        Resistance 1: ${r1.toFixed(2)}<br>
+        Support 1: ${s1.toFixed(2)}<br>
+        Resistance 2: ${r2.toFixed(2)}<br>
+        Support 2: ${s2.toFixed(2)}
+      `;
+    }
+
+    function hitungFibonacci() {
+      const high = parseFloat(document.getElementById("fibHigh").value);
+      const low = parseFloat(document.getElementById("fibLow").value);
+      const errorDiv = document.getElementById("fibError");
+      const resultDiv = document.getElementById("fibResult");
+
+      errorDiv.innerHTML = "";
+      resultDiv.innerHTML = "";
+
+      if (isNaN(high) || isNaN(low)) {
+        errorDiv.innerHTML = "⚠️ Harap isi semua kolom dengan angka yang valid.";
+        return;
+      }
+
+      if (high < low) {
+        errorDiv.innerHTML = "⚠️ Nilai High tidak boleh lebih kecil dari Low.";
+        return;
+      }
+
+      const diff = high - low;
+      const retracements = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+
+      let resultHTML = "";
+      retracements.forEach(level => {
+        const price = high - diff * level;
+        resultHTML += `${(level * 100).toFixed(1)}%: ${price.toFixed(2)}<br>`;
+      });
+
+      resultDiv.innerHTML = resultHTML;
+    }
+  </script>
+
+</body>
+</html>
